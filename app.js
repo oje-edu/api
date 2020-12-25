@@ -1,14 +1,8 @@
-const path = require('path')
 const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const session = require('express-session')
-const cookieParser = require('cookie-parser')
-const MongoStore = require('connect-mongo')(session)
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
+const cookieParser = require('cookie-parser')
 
 
 // Load config
@@ -20,59 +14,36 @@ const app = express()
 
 // middleware
 app.use(express.static('public'));
+app.use(express.json());
+app.use(cookieParser());
 
 // view engine
 app.set('view engine', 'ejs');
 
-app.use(cookieParser());
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
-
-
-// sessions
-app.use(
-  session({
-    key: "userId",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
-    cookie: {
-      expires: 60 * 60 * 24,
-    },
-  })
-);
 
 // routes
-
-app.get('/api', (req, res) => res.render('home'));
-app.get('/smoothies', (req, res) => res.render('smoothies'));
+app.get('/start', (req, res) => res.render('start'));
+app.get('/posts', (req, res) => res.render('posts'));
 app.use(authRoutes);
 
+// // kekse
+// app.get('/set-cookies', (req, res) => {
+//   res.cookie('newUser', false, { secure: true, httpOnly: true });
+//   res.cookie('isHTMLHacker', true, { maxAge: 1000 * 60 * 60 * 24, secure: true, httpOnly: true });
+
+//   res.send('Glückwunsch zum Krümelmonster erster Klasse!')
+// });
+
+// app.get('/read-cookies', (req, res) => {
+//   const cookies = req.cookies;
+//   console.log(cookies);
+
+//   res.json(cookies);
+// });
 
 
-// logging
-const pino = require('pino')
-const dest = pino.destination({ sync: false })
-const logger = pino(dest)
-
-setInterval(function () {
-  logger.flush()
-}, 10000).unref()
-const handler = pino.final(logger, (err, finalLogger, evt) => {
-  finalLogger.info(`${evt} caught`)
-  if (err) finalLogger.error(err, 'error caused exit')
-  process.exit(err ? 1 : 0)
-})
-process.on('beforeExit', () => handler(null, 'beforeExit'))
-process.on('exit', () => handler(null, 'exit'))
-process.on('uncaughtException', (err) => handler(err, 'uncaughtException'))
-process.on('SIGINT', () => handler(null, 'SIGINT'))
-process.on('SIGQUIT', () => handler(null, 'SIGQUIT'))
-process.on('SIGTERM', () => handler(null, 'SIGTERM'))
-
-const PORT = process.env.PORT || 5050
+const PORT = process.env.PORT || 5512
 
 app.listen(
   PORT,

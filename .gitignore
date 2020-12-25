@@ -1,3 +1,4 @@
 .env
 config.env
+backup.config.env
 node_modules

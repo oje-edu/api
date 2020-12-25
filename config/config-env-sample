@@ -5,3 +5,4 @@ GOOGLE_CLIENT_ID = xxxxxx
 GOOGLE_CLIENT_SECRET = xxxxx
 
 SESSION_SECRET = xxxxxx
+TOKEN_SECRET = xxxxx 
