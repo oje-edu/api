@@ -1,8 +1,7 @@
-# rename to config.env
 MONGO_URI = mongodb+srv://test:passwort12354@cluster0.wvwfk.mongodb.net/MYDATABASE?retryWrites=true&w=majority
 PORT = 5000
 
-GOOGLE_CLIENT_ID =
-GOOGLE_CLIENT_SECRET =
+GOOGLE_CLIENT_ID = xxxxxx
+GOOGLE_CLIENT_SECRET = xxxxx
 
-SESSION_SECRET = 
+SESSION_SECRET = xxxxxx

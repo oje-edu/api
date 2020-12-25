@@ -5,39 +5,52 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const session = require('express-session')
+const cookieParser = require('cookie-parser')
 const MongoStore = require('connect-mongo')(session)
 const connectDB = require('./config/db')
-const bcrypt = require('bcrypt')
-const saltRounds = 13
+const authRoutes = require('./routes/authRoutes')
 
-const jwt = require('jsonwebtoken')
 
 // Load config
 dotenv.config({ path: './config/config.env' })
 
+
 connectDB()
 const app = express()
 
+// middleware
+app.use(express.static('public'));
+
+// view engine
+app.set('view engine', 'ejs');
+
+app.use(cookieParser());
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors());
 
-var corsOptions = {
-  origin: ['oje.ooo', '*.oje.ooo', 'http://localhost:3000']
-};
+
 
 // sessions
 app.use(
   session({
+    key: "userId",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    cookie: {
+      expires: 60 * 60 * 24,
+    },
   })
-)
+);
 
-// static folder
-app.use(express.static(path.join(__dirname, 'public')))
+// routes
+
+app.get('/api', (req, res) => res.render('home'));
+app.get('/smoothies', (req, res) => res.render('smoothies'));
+app.use(authRoutes);
+
+
 
 // logging
 const pino = require('pino')
