@@ -4,8 +4,8 @@
   "description": "test",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node app",
-    "dev": "cross-env NODE_ENV=development nodemon app",
+    "start": "NODE_ENV=production node app",
+    "dev": "NODE_ENV=development nodemon app",
     "postinstall": "node ./scripts/post-install.js"
   },
   "keywords": [],
@@ -23,8 +23,5 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.8",
     "nodemon": "^2.0.6"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
   }
 }
