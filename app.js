@@ -36,6 +36,29 @@ app.use(
   })
 )
 
+// static folder
+app.use(express.static(path.join(__dirname, 'public')))
+
+// logging
+const pino = require('pino')
+const dest = pino.destination({ sync: false })
+const logger = pino(dest)
+
+setInterval(function () {
+  logger.flush()
+}, 10000).unref()
+const handler = pino.final(logger, (err, finalLogger, evt) => {
+  finalLogger.info(`${evt} caught`)
+  if (err) finalLogger.error(err, 'error caused exit')
+  process.exit(err ? 1 : 0)
+})
+process.on('beforeExit', () => handler(null, 'beforeExit'))
+process.on('exit', () => handler(null, 'exit'))
+process.on('uncaughtException', (err) => handler(err, 'uncaughtException'))
+process.on('SIGINT', () => handler(null, 'SIGINT'))
+process.on('SIGQUIT', () => handler(null, 'SIGQUIT'))
+process.on('SIGTERM', () => handler(null, 'SIGTERM'))
+
 const PORT = process.env.PORT || 5050
 
 app.listen(
