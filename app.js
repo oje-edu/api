@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
 const cookieParser = require('cookie-parser')
+const { requireAuth, checkUser } = require('./middleware/authMiddleware')
 
 
 // Load config
@@ -23,8 +24,9 @@ app.set('view engine', 'ejs');
 
 
 // routes
+app.get('*', checkUser);
 app.get('/start', (req, res) => res.render('start'));
-app.get('/posts', (req, res) => res.render('posts'));
+app.get('/posts', requireAuth, (req, res) => res.render('posts'));
 app.use(authRoutes);
 
 // // kekse
